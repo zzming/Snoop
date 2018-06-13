@@ -2,25 +2,25 @@ unit SnoopTrace;
 
 interface
 
-uses SysUtils, Windows, Messages, Dialogs;
+uses SysUtils, Windows, Messages, Vcl.Dialogs;
 
-procedure SnoopGTrace(_Format: String); overload;
-procedure SnoopGTrace(_Format: String; const Args: array of const); overload;
+procedure SnoopGTrace(_Format: AnsiString); overload;
+procedure SnoopGTrace(_Format: AnsiString; const Args: array of const); overload;
 
 implementation
 
 var
   SnoopTraceHandle: THandle;
 
-procedure snoopGTrace(_Format: String);
+procedure snoopGTrace(_Format: AnsiString);
 begin
 	snoopGTrace(_Format, []);
 end;
 
-procedure snoopGTrace(_Format: String; const Args: array of const);
+procedure snoopGTrace(_Format: AnsiString; const Args: array of const);
 var
 	cds: COPYDATASTRUCT;
-	Buffer: String;
+	Buffer: AnsiString;
 begin
 	Buffer := Format(_Format, Args) + #13;
 	cds.cbData := Length(Buffer);

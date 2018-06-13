@@ -12,7 +12,7 @@ type
   TSnoopMemoryNode = packed record
 	PacketHeader: PCAP_PKTHDR;
 	Next: PSnoopMemoryNode;
-	Data: array [0 .. 0] of Char;
+	Data: array [0 .. 0] of AnsiChar;
   end;
   TSnoopMemory = class
   public
@@ -24,7 +24,7 @@ type
 	constructor Create;
 	destructor Destroy; override;
 	procedure Clear;
-	function Enqueue(PacketHeader: PPCAP_PKTHDR; Data: PChar): PSnoopMemoryNode;
+	function Enqueue(PacketHeader: PPCAP_PKTHDR; Data: PAnsiChar): PSnoopMemoryNode;
 	function GetNext(HeaderNode: PSnoopMemoryNode): PSnoopMemoryNode;
 	procedure Next;
   public
@@ -62,7 +62,7 @@ begin
 	TailNode := nil;
 end;
 
-function TSnoopMemory.Enqueue(PacketHeader: PPCAP_PKTHDR; Data: PChar): PSnoopMemoryNode;
+function TSnoopMemory.Enqueue(PacketHeader: PPCAP_PKTHDR; Data: PAnsiChar): PSnoopMemoryNode;
 var
 	DataLength: Integer;
 	TotalLength: Integer;
@@ -78,7 +78,7 @@ begin
 		exit;
 	end;
 	// Process PacketHeader
-	StrMove(PChar(@Node^.PacketHeader), PChar(PacketHeader), sizeof(PCAP_PKTHDR));
+	StrMove(PAnsiChar(@Node^.PacketHeader), PAnsiChar(PacketHeader), sizeof(PCAP_PKTHDR));
 	// Process Next
 	Node^.Next := nil;
 	// Process Data

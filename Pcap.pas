@@ -34,7 +34,7 @@ type
   bpf_u_int32 = integer; // gilgil temp 2003.07.20
   long = integer;
   u_int = LongWord;
-  ppchar = ^pchar; // gilgil temp 2003.07.20
+  PPAnsiChar = ^PAnsiChar; // gilgil temp 2003.07.20
 
   ppcap_addr_t = ^pcap_addr_t;
   pcap_addr_t = packed record
@@ -49,8 +49,8 @@ type
   pppcap_if_t = ^ppcap_if_t;
   pcap_if_t = packed record
 	next: ppcap_if_t;
-	name: pchar;
-	description: pchar;
+	name: PAnsiChar;
+	description: PAnsiChar;
 	address : ppcap_addr_t;
 	flags: bpf_u_int32;
   end;
@@ -61,8 +61,8 @@ type
   ppcap_rmtauth = ^pcap_rmtauth;
   pcap_rmtauth = packed record
 	type_: integer;
-	username: pchar;
-	password: pchar;
+	username: PAnsiChar;
+	password: PAnsiChar;
   end;
 
   timeval = packed record
@@ -80,27 +80,27 @@ type
   ppcap_dumper_t = ^pcap_dumper_t;
   pcap_dumper_t = integer; // gilgil temp 2003.07.26
 
-  pcap_handler = procedure(p: pchar; header: ppkt_header; data: pchar); cdecl;
+  pcap_handler = procedure(p: PAnsiChar; header: ppkt_header; data: PAnsiChar); cdecl;
 
 // ----------------------------------------------------------------------------
 // Function Definition
 // ----------------------------------------------------------------------------
-function pcap_findalldevs(alldevs: pppcap_if_t ; errbuf : pchar): integer; cdecl;
-function pcap_findalldevs_ex(source: pchar; auth: ppcap_rmtauth; alldevs: ppcap_if_t; errbuf: pchar): integer; cdecl;
+function pcap_findalldevs(alldevs: pppcap_if_t ; errbuf : PAnsiChar): integer; cdecl;
+function pcap_findalldevs_ex(source: PAnsiChar; auth: ppcap_rmtauth; alldevs: ppcap_if_t; errbuf: PAnsiChar): integer; cdecl;
 procedure pcap_freealldevs(alldevs: ppcap_if_t); cdecl;
-function pcap_open_live(device: pchar; snaplen: integer; promisc: integer; to_ms: integer; ebuf: pchar): ppcap_t; cdecl;
-function pcap_open(source: pchar; snaplen: integer; flags: integer; read_timeout: integer; auth: ppcap_rmtauth; errbuf: pchar): ppcap_t; cdecl;
+function pcap_open_live(device: PAnsiChar; snaplen: integer; promisc: integer; to_ms: integer; ebuf: PAnsiChar): ppcap_t; cdecl;
+function pcap_open(source: PAnsiChar; snaplen: integer; flags: integer; read_timeout: integer; auth: ppcap_rmtauth; errbuf: PAnsiChar): ppcap_t; cdecl;
 procedure pcap_close(p: ppcap_t); cdecl;
-function pcap_loop(p: ppcap_t; cnt: integer; ppcap_handler: pointer; user: pchar): integer; cdecl;
-function pcap_next_ex(p: ppcap_t; pkt_header: ppcap_pkthdr; pkt_data: ppchar): integer; cdecl;
-function pcap_lookupnet(device: pchar; netp: pbpf_u_int32; maskp: pbpf_u_int32; errbuf: pchar): integer; cdecl;
-function pcap_compile(p: ppcap_t; fp: pbpf_program; str: pchar; optimize: integer; netmask: bpf_u_int32): integer; cdecl;
+function pcap_loop(p: ppcap_t; cnt: integer; ppcap_handler: pointer; user: PAnsiChar): integer; cdecl;
+function pcap_next_ex(p: ppcap_t; pkt_header: ppcap_pkthdr; pkt_data: PPAnsiChar): integer; cdecl;
+function pcap_lookupnet(device: PAnsiChar; netp: pbpf_u_int32; maskp: pbpf_u_int32; errbuf: PAnsiChar): integer; cdecl;
+function pcap_compile(p: ppcap_t; fp: pbpf_program; str: PAnsiChar; optimize: integer; netmask: bpf_u_int32): integer; cdecl;
 function pcap_setfilter(p: ppcap_t; fp: pbpf_program): integer; cdecl;
-function pcap_geterr(p: ppcap_t): pchar; cdecl;
-function pcap_dump_open(p: ppcap_t; fname: pchar): ppcap_dumper_t; cdecl;
-procedure pcap_dump(p: ppcap_dumper_t; h: ppcap_pkthdr; sp: pchar); cdecl;
+function pcap_geterr(p: ppcap_t): PAnsiChar; cdecl;
+function pcap_dump_open(p: ppcap_t; fname: PAnsiChar): ppcap_dumper_t; cdecl;
+procedure pcap_dump(p: ppcap_dumper_t; h: ppcap_pkthdr; sp: PAnsiChar); cdecl;
 procedure pcap_dump_close(p: ppcap_dumper_t); cdecl;
-function pcap_sendpacket(p: ppcap_t; buf: pchar; size: integer): integer; cdecl;
+function pcap_sendpacket(p: ppcap_t; buf: PAnsiChar; size: integer): integer; cdecl;
 function pcap_setmode(p: ppcap_t; mode: integer): integer; cdecl;
 
 implementation
