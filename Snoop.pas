@@ -487,6 +487,7 @@ type
   // General Functions
   // ----------------------------------------------------------------------------
 function snoopIsNull(EthernetHeader: PETHERNET_HDR): Boolean;
+function snoopIsIPv6(EthernetHeader: PETHERNET_HDR): Boolean;
 function snoopIsIP(EthernetHeader: PETHERNET_HDR; IPHeader: PPIP_HDR = nil):
   Boolean;
 function snoopIsARP(EthernetHeader: PETHERNET_HDR; ARPHeader: PPARP_HDR = nil):
@@ -513,6 +514,7 @@ function snoopTCPChecksum(IPHeader: PIP_HDR; TCPHeader: PTCP_HDR): WORD;
 function snoopUDPChecksum(IPHeader: PIP_HDR; UDPHeader: PUDP_HDR): WORD;
 function snoopSendPacket(Pcap: PPcap; Buffer: PAnsiChar; Size: Integer):
   Integer;
+function IsIpSameNetSeg(AsIp1, AsIp2, AsMask: AnsiString): Boolean;
 
 procedure Register;
 
@@ -589,6 +591,8 @@ begin
     Snoop.FPacketData := PacketData;
     if snoopIsNull(Snoop.FPacketData) then
       continue;                         //loopback Null
+    if snoopIsIPv6(Snoop.FPacketData) then
+      continue;
     if Snoop.ThreadSafe then
       Synchronize(Snoop.OnCaptureCB)
     else
@@ -1437,6 +1441,11 @@ begin
       (Destination[3] = $00);
 end;
 
+function snoopIsIPv6(EthernetHeader: PETHERNET_HDR): Boolean;
+begin
+  Result := ntohs(EthernetHeader.Protocol) = PROTO_IPNG;
+end;
+
 function snoopIsIP(EthernetHeader: PETHERNET_HDR; IPHeader: PPIP_HDR): Boolean;
 begin
   Result := false;
@@ -1759,6 +1768,19 @@ function snoopSendPacket(Pcap: PPcap; Buffer: PAnsiChar; Size: Integer):
   Integer;
 begin
   Result := pcap_sendpacket(Pcap, Buffer, Size);
+end;
+
+function IsIpSameNetSeg(AsIp1, AsIp2, AsMask: AnsiString): Boolean;
+var
+  viIp1, viIp2, viMask: u_long;
+  viAnd1, viAnd2    : u_long;
+begin
+  viIp1 := snoopStr2IP(AsIp1);
+  viIp2 := snoopStr2IP(AsIp2);
+  viMask := snoopStr2IP(AsMask);
+  viAnd1 := viIp1 and viMask;
+  viAnd2 := viIp2 and viMask;
+  Result := viAnd1 = viAnd2;
 end;
 
 end.
